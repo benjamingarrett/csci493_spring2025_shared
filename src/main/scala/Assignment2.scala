@@ -48,8 +48,13 @@ object Assignment2 extends App {
   type StringCoords = Tuple4[String,String,String,String]
   type DoubleCoords = Tuple4[Double,Double,Double,Double]
   val m: Map[String,StringCoords] = Map(
-    "slope one" -> ("0.0","0.0","1.0","1.0"),
-    "slope zero" -> ("1.0","1.0","2.0","1.0"),
+    "slope one intercept zero" -> ("3.0", "3.0", "7.0", "7.0"),
+    "slope one intercept one" -> ("1.0","2.0","2.0","3.0"),
+    "slope zero intercept zero" -> ("3.0","0.0","7.0","0.0"),
+    "slope zero intercept three" -> ("3.0","3.0","7.0","3.0"),
+    "slope two intercept three" -> ("5.0","13.0","7.0","17.0"),
+    "slope neg three intercept four" -> ("5.0","-11.0","7.0","-17.0"),
+    "slope neg three intercept neg two" -> ("5.0","-17.0","7.0","-23.0"),
     "undefined slope" -> ("2.0","2.0","2.0","3.0"),
     "bad values" -> ("foo","bar","baz","biz")
   )
@@ -79,34 +84,68 @@ object Assignment2 extends App {
   // TODO: replace the ??? with the correct expression
   val predictFC: Map[String,StringCoords] => String => Double => Either[MiscError,Double] = ???
 
-  val oneSlope: Either[MiscError,Double] = predict(m)("slope one")(4.0)
-  val oneSlopeFC: Either[MiscError,Double] = predictFC(m)("slope one")(4.0)
+  val oneSlopeZero: Either[MiscError,Double] = predict(m)("slope one intercept zero")(13.0)
+  val oneSlopeZeroFC: Either[MiscError,Double] = predictFC(m)("slope one intercpet zero")(13.0)
+  println("slope one intercept zero")
+  println("Expected: Right(13.0)")
+  println(s"Actual:   $oneSlopeZero")
+  println(s"Actual:   $oneSlopeZeroFC")
 
-  val zeroSlope: Either[MiscError,Double] = predict(m)("slope zero")(4.0)
-  val zeroSlopeFC: Either[MiscError,Double] = predictFC(m)("slope zero")(4.0)
+  val oneSlopeOne: Either[MiscError,Double] = predict(m)("slope one intercept one")(5.0)
+  val oneSlopeOneFC: Either[MiscError,Double] = predictFC(m)("slope one intercept one")(5.0)
+  println("slope one intercept one")
+  println("Expected: Right(6.0)")
+  println(s"Actual:   $oneSlopeOne")
+  println(s"Actual:   $oneSlopeOneFC")
+
+  val zeroSlopeZero: Either[MiscError,Double] = predict(m)("slope zero intercept zero")(9.0)
+  val zeroSlopeZeroFC: Either[MiscError,Double] = predictFC(m)("slope zero intercept zero")(9.0)
+  println("slope zero intercept zero")
+  println("Expected: Right(0.0)")
+  println(s"Actual:   $zeroSlopeZero")
+  println(s"Actual:   $zeroSlopeZeroFC")
+
+  val zeroSlopeThree: Either[MiscError,Double] = predict(m)("slope zero intercept three")(11.0)
+  val zeroSlopeThreeFC: Either[MiscError,Double] = predictFC(m)("slope zero intercept three")(11.0)
+  println("slope zero intercept three")
+  println("Expected: Right(3.0)")
+  println(s"Actual:   $zeroSlopeThree")
+  println(s"Actual:   $zeroSlopeThreeFC")
+
+  val twoSlopeThree: Either[MiscError,Double] = predict(m)("slope two intercept three")(8.0)
+  val twoSlopeThreeFC: Either[MiscError,Double] = predictFC(m)("slope two intercept three")(8.0)
+  println("slope two intercept three")
+  println("Expected: Right(19.0)")
+  println(s"Actual:   $twoSlopeThree")
+  println(s"Actual:   $twoSlopeThreeFC")
+
+  val negThreeSlopeFour: Either[MiscError,Double] = predict(m)("slope neg three intercept four")(8.0)
+  val negThreeSlopeFourFC: Either[MiscError,Double] = predictFC(m)("slope neg three intercept four")(8.0)
+  println("slope neg three intercept four")
+  println("Expected: Right(-20.0)")
+  println(s"Actual:   $negThreeSlopeFour")
+  println(s"Actual:   $negThreeSlopeFourFC")
+
+  val negThreeSlopeNegTwo: Either[MiscError,Double] = predict(m)("slope neg three intercept neg two")(8.0)
+  val negThreeSlopeNegTwoFC: Either[MiscError,Double] = predictFC(m)("slope neg three intercept neg two")(8.0)
+  println("slope neg three intercept neg two")
+  println("Expected: Right(-26.0)")
+  println(s"Actual:   $negThreeSlopeNegTwo")
+  println(s"Actual:   $negThreeSlopeNegTwoFC")
 
   val undefined: Either[MiscError,Double] = predict(m)("undefined slope")(4.0)
   val undefinedFC: Either[MiscError,Double] = predictFC(m)("undefined slope")(4.0)
-
-  val badValue: Either[MiscError,Double] = predict(m)("bad values")(4.0)
-  val badValueFC: Either[MiscError,Double] = predictFC(m)("bad values")(4.0)
-
-  println("Expected: Right(5.0)")
-  println(s"Actual:   $oneSlope")
-  println(s"Actual:   $oneSlopeFC")
-
-  println("Expected: Right(1.0)")
-  println(s"Actual:   $zeroSlope")
-  println(s"Actual:   $zeroSlopeFC")
-
+  println("undefined slope")
   println("Expected: Left(Main$UndefinedSlopeError$@21f9277b)  (NB: memory references vary)")
   println(s"Actual:   $undefined")
   println(s"Actual:   $undefinedFC")
 
+  val badValue: Either[MiscError,Double] = predict(m)("bad values")(4.0)
+  val badValueFC: Either[MiscError,Double] = predictFC(m)("bad values")(4.0)
+  println("bad values")
   println("Expected: Left(Main$TypeConversionError$@201aa8c1)  (NB: memory references vary)")
   println(s"Actual:   $badValue")
   println(s"Actual:   $badValueFC")
-
 
   // Problem 4: Corecursion using Streams
   // i. factorials: this expression computes a lazy list of all factorials, i.e. f_0 = 1, f_n = n * f_n-1
